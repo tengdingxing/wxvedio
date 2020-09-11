@@ -1,0 +1,10 @@
+server:
+  port: 8081
+spring:
+  datasource:
+    password: 123456
+    url: jdbc:mysql://localhost:3306/wxvedio?characterEncoding=utf-8&serverTimezone=UTC
+    username: root
+mybatis:
+  type-aliases-package: com.imooc.pojo
+ # configuration: true  #使用通用mapper自定义的方法要开启驼峰命名法
