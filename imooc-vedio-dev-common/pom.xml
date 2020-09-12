@@ -164,6 +164,13 @@
             <version>0.6.0</version>
         </dependency>
 
+        <!--lombok自动生成get和set方法-->
+        <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.18.4</version>
+    </dependency>
+
     </dependencies>
 
 

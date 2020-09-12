@@ -25,4 +25,14 @@ public interface UserService {
     *@Time 10:25
     */
     public void saveUser(Users user);
+
+    /**
+    *@Description 通过用户名和密码查询该用户是否存在
+    *@Param
+    *@Return
+    *@Author Tdxing
+    *@Date 2020/9/11
+    *@Time 22:05
+    */
+    Boolean queryUserIsExistByNameAndPassword(String username,String password);
 }

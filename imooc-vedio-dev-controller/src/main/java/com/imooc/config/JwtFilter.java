@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.servlet.Filter;
 import java.util.List;
 
+
 public class JwtFilter  {
 
     @Bean
@@ -17,7 +18,7 @@ public class JwtFilter  {
         registrationBean.setFilter((Filter) new JwtFilter());
         //添加需要拦截的url
         List<String> urlPatterns = Lists.newArrayList();
-        urlPatterns.add("/article/insert");
+        urlPatterns.add("/**");
         registrationBean.addUrlPatterns(urlPatterns.toArray(new String[urlPatterns.size()]));
         return registrationBean;
     }

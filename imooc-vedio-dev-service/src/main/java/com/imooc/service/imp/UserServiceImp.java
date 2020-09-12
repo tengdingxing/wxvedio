@@ -39,4 +39,17 @@ public class UserServiceImp implements UserService {
         //user.setNickname(user.getUsername());
         this.usersMapper.insert(user);
     }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public Boolean queryUserIsExistByNameAndPassword(String username, String password) {
+
+        Users user = new Users();
+        user.setUsername(username);
+        user.setPassword(password);
+
+        Users result = this.usersMapper.selectOne(user);
+
+        return result == null ? false : true;
+    }
 }
