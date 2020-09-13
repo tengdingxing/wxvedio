@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.mapper.util.Sqls;
 
 @Service
 public class UserServiceImp implements UserService {
@@ -62,5 +63,19 @@ public class UserServiceImp implements UserService {
         criteria.andEqualTo("id",user.getId());
 
         this.usersMapper.updateByExampleSelective(user,example);
+    }
+
+    @Override
+    public Users queryUserInfo(String userId) {
+
+        Example example = new Example(Users.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("id",userId);
+
+        Users user = this.usersMapper.selectOneByExample(example);
+
+
+
+        return user;
     }
 }

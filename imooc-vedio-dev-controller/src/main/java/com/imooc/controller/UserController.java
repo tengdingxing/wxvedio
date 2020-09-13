@@ -6,12 +6,13 @@ import com.imooc.utils.IMoocJSONResult;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -20,11 +21,20 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/uploadFace")
+
+    /**
+    *@Description 文件上传
+    *@Param
+    *@Return
+    *@Author Tdxing
+    *@Date 2020/9/13
+    *@Time 15:39
+    */
+    @PostMapping(value = "/uploadFace"/*,produces = "application/json;charset=UTF-8"*/)
     public IMoocJSONResult uploadFace(String userId, @RequestParam("file") MultipartFile[] files) throws IOException {
 
         //文件保存路径
-        String fileSpace = "D:\\imooc_dev_vedios";
+        String fileSpace = "D:/imooc_dev_vedios";
 
         //用户保存的路径（相对路径）
         String uploadPathDB = "/"+userId+"/face";
@@ -36,6 +46,7 @@ public class UserController {
 
                 //获取file的名字
                 String filename = files[0].getOriginalFilename();
+
 
                 if (StringUtils.isNotBlank(filename)){
                     //文件最终上传的保存路径
@@ -74,6 +85,38 @@ public class UserController {
         user.setFaceImage(uploadPathDB);
         this.userService.updateUserInfo(user);
 
-        return IMoocJSONResult.ok();
+        return IMoocJSONResult.ok(uploadPathDB);
     }
+
+    /**
+    *@Description 查询用户信息
+    *@Param
+    *@Return
+    *@Author Tdxing
+    *@Date 2020/9/13
+    *@Time 15:39
+    */
+    @PostMapping("/queryUserInfo")
+    public IMoocJSONResult queryUserInfo(@RequestBody Map<String,String>map){
+
+        //获取用户id
+        String userId = map.get("userId");
+        //判断用户的id是否为空
+        if (StringUtils.isBlank(userId)){
+            return IMoocJSONResult.errorMsg("不存在这个id");
+        }
+
+        //判断用户是否存在
+        Users user = this.userService.queryUserInfo(userId);
+
+        if (user == null){
+            return IMoocJSONResult.errorMsg("用户不存在");
+        }
+
+        Map<String,Object> return_map = new HashMap<>();
+        return_map.put("user",user);
+
+        return IMoocJSONResult.ok(return_map);
+    }
+
 }

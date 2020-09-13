@@ -1,5 +1,7 @@
 package com.imooc.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Users {
 
     public Users() {
@@ -27,6 +29,7 @@ public class Users {
      *
      * @mbggenerated
      */
+    @JsonIgnore
     private String password;
 
     /**
