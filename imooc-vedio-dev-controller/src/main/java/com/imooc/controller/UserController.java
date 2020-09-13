@@ -1,103 +1,79 @@
 package com.imooc.controller;
 
-import com.imooc.pojo.Audience;
-import com.imooc.service.UserService;
 import com.imooc.pojo.Users;
+import com.imooc.service.UserService;
 import com.imooc.utils.IMoocJSONResult;
-import com.imooc.utils.JwtHelper;
-import com.imooc.utils.MD5Utils;
-
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.Arrays;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private Audience audience;
+    @PostMapping("/uploadFace")
+    public IMoocJSONResult uploadFace(String userId, @RequestParam("file") MultipartFile[] files) throws IOException {
 
+        //文件保存路径
+        String fileSpace = "D:\\imooc_dev_vedios";
 
-    /**
-    *@Description 用户注册
-    *@Param
-    *@Return
-    *@Author Tdxing
-    *@Date 2020/9/11
-    *@Time 21:58
-    */
-    @PostMapping("register")
-    public IMoocJSONResult register(@RequestBody Users user) throws Exception {
+        //用户保存的路径（相对路径）
+        String uploadPathDB = "/"+userId+"/face";
 
-        //判断用户名，密码是否为空
-        if (StringUtils.isBlank(user.getUsername()) || StringUtils.isBlank(user.getPassword())){
-            return IMoocJSONResult.errorMsg("用户名和密码不能为空");
+        FileOutputStream outputStream = null;
+        InputStream inputStream = null;
+        try {
+            if (files != null || files.length >0){
+
+                //获取file的名字
+                String filename = files[0].getOriginalFilename();
+
+                if (StringUtils.isNotBlank(filename)){
+                    //文件最终上传的保存路径
+                    String path = fileSpace+uploadPathDB+"/"+filename;
+                    //设置数据库保存的路径
+                   uploadPathDB += ("/"+filename);
+
+                    File outFile = new File(path);
+                    if (outFile.getParentFile() != null || !outFile.getParentFile().isDirectory()){
+                         //创建文件夹
+                        outFile.getParentFile().mkdirs();
+                    }
+                    outputStream = new FileOutputStream(outFile);
+                    inputStream =  files[0].getInputStream();
+
+                    //工具类进行拷贝
+                    IOUtils.copy(inputStream,outputStream);
+
+                }
+
+            }else {
+                return IMoocJSONResult.errorMsg("上传文件不能为空");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            if (outputStream != null){
+                outputStream.flush();
+                outputStream.close();
+            }
         }
 
-        //判断用户用户名是否存在
-        boolean flag = this.userService.queryUserNameIsExist(user.getUsername());
-
-        if (!flag){
-            //保存用户
-            user.setNickname(user.getUsername());
-            user.setFansCounts(0);
-            user.setFollowCounts(0);
-            user.setReceiveLikeCounts(0);
-            user.setPassword(MD5Utils.getMD5Str(user.getPassword()));
-            this.userService.saveUser(user);
-        }else {
-            return IMoocJSONResult.errorMsg("用户已经存在");
-        }
+        //进行路径的保存
+        Users user = new Users();
+        user.setId(userId);
+        user.setFaceImage(uploadPathDB);
+        this.userService.updateUserInfo(user);
 
         return IMoocJSONResult.ok();
     }
-
-    /**
-    *@Description 用户登入
-    *@Param
-    *@Return
-    *@Author Tdxing
-    *@Date 2020/9/11
-    *@Time 21:59
-    */
-    @PostMapping("login")
-    public IMoocJSONResult login(@RequestBody Users user) throws Exception {
-
-        //判断用户名用户是否存在
-        boolean flag = this.userService.queryUserNameIsExist(user.getUsername());
-        if (!flag){
-            return IMoocJSONResult.errorMsg("请先注册");
-        }
-        //判断密码是否正确
-        String username = user.getUsername();
-        String password = user.getPassword();
-
-        Boolean b = this.userService.queryUserIsExistByNameAndPassword(username, MD5Utils.getMD5Str(password));
-        if (!b){
-            return IMoocJSONResult.errorMsg("密码错误");
-        }
-
-        //生成token
-        String jwtToken = JwtHelper.createJWT(user.getUsername(),
-                user.getId(),
-                user.getPassword(),
-                audience.getClientId(),
-                audience.getName(),
-                audience.getExpiresSecond()*1000,
-                audience.getBase64Secret());
-
-        String jwt_token = "bearer;" + jwtToken;
-        Map<String,String> map = new HashMap<>();
-        map.put("jwtToken",jwt_token);
-        return IMoocJSONResult.ok(map);
-    }
-
 }

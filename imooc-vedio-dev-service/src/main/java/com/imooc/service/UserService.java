@@ -35,4 +35,14 @@ public interface UserService {
     *@Time 22:05
     */
     Boolean queryUserIsExistByNameAndPassword(String username,String password);
+
+    /**
+    *@Description 修改用户信息
+    *@Param
+    *@Return
+    *@Author Tdxing
+    *@Date 2020/9/13
+    *@Time 10:59
+    */
+    public void updateUserInfo(Users user);
 }
