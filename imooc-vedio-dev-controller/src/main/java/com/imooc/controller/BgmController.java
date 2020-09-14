@@ -1,29 +1,36 @@
 package com.imooc.controller;
 
-import com.imooc.BgmService;
+import com.imooc.pojo.Bgm;
+import com.imooc.service.BgmService;
+import com.imooc.service.imp.BgmServiceImp;
+import com.imooc.utils.IMoocJSONResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/bgm")
 public class BgmController {
 
     @Autowired
     private BgmService bgmService;
 
-    @GetMapping("allUsers")
+    @PostMapping("/queryBgmList")
     @ResponseBody
-    public ResponseEntity<Map<String,Object>>findAllUsers(){
+    public IMoocJSONResult list(){
 
-        Map<String,Object>map = new HashMap<>();
+        List<Bgm> list = this.bgmService.list();
 
-        map = this.bgmService.findAllUsers();
+       if (CollectionUtils.isEmpty(list)){
+            return IMoocJSONResult.errorMsg("歌曲列表为空，请先添加歌曲");
+        }
 
-        return ResponseEntity.ok(map);
+        Map<String,Object> map =  new HashMap<>();
+        map.put("songs",list);
+        return IMoocJSONResult.ok(map);
     }
 }

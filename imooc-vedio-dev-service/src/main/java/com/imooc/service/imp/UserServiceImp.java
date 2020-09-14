@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
-import tk.mybatis.mapper.util.Sqls;
+
 
 @Service
 public class UserServiceImp implements UserService {
