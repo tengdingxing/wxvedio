@@ -78,4 +78,13 @@ public class UserServiceImp implements UserService {
 
         return user;
     }
+
+    @Override
+    public Users findUser(String username) {
+
+        Users user = new Users();
+        user.setUsername(username);
+
+        return this.usersMapper.selectOne(user);
+    }
 }

@@ -53,4 +53,14 @@ public interface UserService {
     *@Time 15:53
     */
     public Users queryUserInfo(String userId);
+
+    /**
+    *@Description 通过用户名查询用户
+    *@Param
+    *@Return
+    *@Author Tdxing
+    *@Date 2020/9/14
+    *@Time 20:41
+    */
+    public Users findUser(String username);
 }
