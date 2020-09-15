@@ -109,7 +109,7 @@ public class RegisterAndLoginController {
                 user.getId(),
                 audience.getClientId(),
                 audience.getName(),
-                audience.getExpiresSecond()*1000,
+                audience.getExpiresSecond()/4,//设置token半个小时后失效0
                 audience.getBase64Secret());
 
        // String jwt_token = "bearer;" + jwtToken;
