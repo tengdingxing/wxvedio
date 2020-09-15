@@ -34,8 +34,7 @@ public class JwtHelper {
     /**
      * 构建jwt
      */
-    public static String createJWT(String name, String password, String userId,
-                                   String audience, String issuer, long TTLMillis, String base64Security) {
+    public static String createJWT(String username,String userId, String audience, String issuer, long TTLMillis, String base64Security) {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
         long nowMillis = System.currentTimeMillis();
@@ -47,8 +46,8 @@ public class JwtHelper {
 
         //添加构成JWT的参数
         JwtBuilder builder = Jwts.builder().setHeaderParam("typ", "JWT")
-                .claim("unique_name", name)
-                .claim("userid", userId)
+                .claim("userName",username)
+                .claim("userId", userId)
                 .setIssuer(issuer)
                 .setAudience(audience)
                 .signWith(signatureAlgorithm, signingKey);

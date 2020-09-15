@@ -5,6 +5,8 @@ import com.imooc.pojo.Videos;
 import com.imooc.service.UserService;
 import com.imooc.service.VideoService;
 import com.imooc.utils.IMoocJSONResult;
+import com.imooc.config.VerifyToken;
+import io.jsonwebtoken.Claims;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
+    @Autowired
+    private VerifyToken verifyToken;
 
     @Autowired
     private UserService userService;
@@ -180,6 +185,12 @@ public class UserController {
     */
     @PostMapping("/queryUserInfo")
     public IMoocJSONResult queryUserInfo(@RequestBody Map<String,String>map){
+
+        //进行token校验
+        Boolean flag = this.verifyToken.verifyToken(map);
+        if (!flag){
+            return IMoocJSONResult.errorTokenMsg("token失效");
+        }
 
         //获取用户id
         String userId = map.get("userId");

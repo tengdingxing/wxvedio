@@ -81,9 +81,9 @@ public class RegisterAndLoginController {
 
 
         String username = rMap.get("username");
-        System.out.println(username);
+       // System.out.println(username);
         String password = rMap.get("password");
-        System.out.println(password);
+       // System.out.println(password);
 
         //判断用户名用户是否存在
         boolean flag = this.userService.queryUserNameIsExist(username);
@@ -101,20 +101,21 @@ public class RegisterAndLoginController {
 
         //通过用户名查询用户
         Users user = this.userService.findUser(username);
-        System.out.println(user);
+        System.out.println(user.getId());
 
         //生成token
-        String jwtToken = JwtHelper.createJWT(user.getUsername(),
+        String jwtToken = JwtHelper.createJWT(
+                username,
                 user.getId(),
-                user.getPassword(),
                 audience.getClientId(),
                 audience.getName(),
                 audience.getExpiresSecond()*1000,
                 audience.getBase64Secret());
 
-        String jwt_token = "bearer;" + jwtToken;
+       // String jwt_token = "bearer;" + jwtToken;
         Map<String,String> map = new HashMap<>();
-        map.put("jwtToken",jwt_token);
+        map.put("jwtToken",jwtToken);
+        System.out.println(jwtToken);
         return IMoocJSONResult.ok(map);
     }
 
